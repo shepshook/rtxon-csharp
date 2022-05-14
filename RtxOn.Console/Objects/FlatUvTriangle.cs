@@ -80,9 +80,9 @@ namespace RtxOn.Console.Objects
             return TraceResult.Hit(this, hitPoint, t);
         }
 
-        public override Color GetColor(Vector point)
+        public override Color GetColor(TraceResult trace)
         {
-            var uvPoint = InterpolatePoint(point);
+            var uvPoint = InterpolatePoint(trace.HitPoint);
             return _texture.GetColor(uvPoint.Item1, uvPoint.Item2);
         }
 

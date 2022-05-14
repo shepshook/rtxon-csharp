@@ -4,7 +4,7 @@ using RtxOn.Console.Objects;
 
 namespace RtxOn.Console.Loader
 {
-    public class ObjLoader : ILoader
+    public class ObjLoader : IObjectLoader
     {
         private static readonly Color DefaultColor = new Color(50, 200, 50);
 

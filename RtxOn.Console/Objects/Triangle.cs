@@ -1,15 +1,16 @@
 using RtxOn.Console.Common;
 using RtxOn.Console.Engine;
+using RtxOn.Console.Loader;
 
 namespace RtxOn.Console.Objects;
 
 public class Triangle : Object3D
 {
-    protected readonly Vector _a;
-    protected readonly Vector _b;
-    protected readonly Vector _c;
-    protected readonly Vector _norm;
-    private readonly double _d;
+    protected Vector _a;
+    protected Vector _b;
+    protected Vector _c;
+    protected Vector _norm;
+    private double _d;
 
     private readonly Color _color;
 
@@ -23,9 +24,14 @@ public class Triangle : Object3D
         _d = -1 * _norm.Dot(_a);
     }
 
-    public override Color GetColor(Vector point) => _color;
+    public static Triangle Create(IEnumerable<Vector> points, Material material)
+    {
+        return new Triangle(points.First(), points.Second(), points.Third(), material.DiffuseColor);
+    }
 
-    public override Vector Norm(Vector point) => _norm;
+    public override Color GetColor(TraceResult trace) => _color;
+
+    public override Vector Norm(TraceResult trace) => _norm;
 
     public override TraceResult Trace(Ray ray)
     {
@@ -39,7 +45,7 @@ public class Triangle : Object3D
 
         var lambda = -1 * (_d + _norm.Dot(ray.Start)) / dot;
         var hitPoint = ray.Start.Sum(ray.Direction.Multiply(lambda));
-        
+
         if (IsFrontFacingRay(hitPoint))
         {
             var distance = hitPoint.Sub(ray.Start).Length;
@@ -49,14 +55,18 @@ public class Triangle : Object3D
         return TraceResult.NoHit();
     }
 
-    private bool IsFrontFacingRay(Vector hitPoint) => 
+    public override void Transform(double[,] transformation)
+    {
+        _a = _a.Transform(transformation);
+        _b = _b.Transform(transformation);
+        _c = _c.Transform(transformation);
+
+        _norm = _c.Sub(_a).Cross(_b.Sub(_c));
+        _d = -1 * _norm.Dot(_a);
+    }
+
+    private bool IsFrontFacingRay(Vector hitPoint) =>
         hitPoint.Sub(_a).Cross(_b.Sub(_a)).Dot(_norm) >= 0
         && hitPoint.Sub(_b).Cross(_c.Sub(_b)).Dot(_norm) >= 0
         && hitPoint.Sub(_c).Cross(_a.Sub(_c)).Dot(_norm) >= 0;
-
-    private bool IsSameClockDirection(Vector a, Vector b, Vector norm)
-    {
-        var normAB = b.Cross(a);
-        return normAB.Dot(norm) >= 0;
-    }
 }

@@ -16,11 +16,11 @@ public class Sphere : Object3D
         _color = color;
     }
 
-    public override Color GetColor(Vector point) => _color;
+    public override Color GetColor(TraceResult trace) => _color;
 
-    public override Vector Norm(Vector point)
+    public override Vector Norm(TraceResult trace)
     {
-        var pointToCenter = point.Sub(_center);
+        var pointToCenter = trace.HitPoint.Sub(_center);
         return pointToCenter.ToUnit();
     }
 
@@ -59,5 +59,10 @@ public class Sphere : Object3D
         var distance = point.Sub(ray.Start).Length;
 
         return TraceResult.Hit(this, point, distance);
+    }
+
+    public override void Transform(double[,] transformation)
+    {
+        _center = _center.Transform(transformation);
     }
 }

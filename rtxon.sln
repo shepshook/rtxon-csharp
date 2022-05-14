@@ -5,9 +5,9 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RtxOn.Console", "RtxOn.Console\RtxOn.Console.csproj", "{4B4BA538-BE88-4ACC-8D87-26207FBBDE2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtxOn.Web", "RtxOn.Web\RtxOn.Web.csproj", "{35B9AF9F-9812-449C-8B08-C32AE1D432B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RtxOn.Mvc", "RtxOn.Mvc\RtxOn.Mvc.csproj", "{F4A34DB3-16D0-4094-AF50-198DA9F4D227}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtxOn.Mvc", "RtxOn.Mvc\RtxOn.Mvc.csproj", "{F4A34DB3-16D0-4094-AF50-198DA9F4D227}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtxOn.Engine", "RtxOn.Engine\RtxOn.Engine.csproj", "{930679DF-970D-4CE1-A824-1FBB60F8799F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{4B4BA538-BE88-4ACC-8D87-26207FBBDE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B4BA538-BE88-4ACC-8D87-26207FBBDE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B4BA538-BE88-4ACC-8D87-26207FBBDE2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35B9AF9F-9812-449C-8B08-C32AE1D432B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35B9AF9F-9812-449C-8B08-C32AE1D432B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35B9AF9F-9812-449C-8B08-C32AE1D432B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35B9AF9F-9812-449C-8B08-C32AE1D432B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4A34DB3-16D0-4094-AF50-198DA9F4D227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4A34DB3-16D0-4094-AF50-198DA9F4D227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4A34DB3-16D0-4094-AF50-198DA9F4D227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4A34DB3-16D0-4094-AF50-198DA9F4D227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930679DF-970D-4CE1-A824-1FBB60F8799F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930679DF-970D-4CE1-A824-1FBB60F8799F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930679DF-970D-4CE1-A824-1FBB60F8799F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930679DF-970D-4CE1-A824-1FBB60F8799F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,11 +3,21 @@ using RtxOn.Console.Objects;
 
 namespace RtxOn.Console.Engine;
 
-public record Scene(int Width, int Height, Object3D[] Objects, Light[] Lights)
+public class Scene
 {
-    public double FocusDistance { get; set; } = 800;
-    public Vector CameraPosition { get; set; } = new Vector(640, 384, 0);
+    public List<Object3D> Objects { get; set; }
+    public List<Light> Lights { get; set; }
+    public int HeightPixels { get; } = 1280;
+    public int WidthPixels { get; } = 768;
+    public PerspectiveCamera Camera { get; set; }
     public Color BackgroundColor { get; set; } = new Color(20, 20, 30);
+
+    public Scene(IEnumerable<Object3D> objects, IEnumerable<Light> lights, PerspectiveCamera camera)
+    {
+        Objects = objects.ToList();
+        Lights = lights.ToList();
+        Camera = camera;
+    }
 
     public Color Trace(Ray ray, double power = 1)
     {
@@ -27,7 +37,7 @@ public record Scene(int Width, int Height, Object3D[] Objects, Light[] Lights)
             return new Color(0, 0, 0);
         }
 
-        var reflectedDirection = ray.Direction.Reflect(trace.Object.Norm(trace.HitPoint));
+        var reflectedDirection = ray.Direction.Reflect(trace.Object.Norm(trace));
         var reflectedRay = new Ray(trace.HitPoint, reflectedDirection);
 
         return Trace(reflectedRay, 0.1 * power);
@@ -44,7 +54,7 @@ public record Scene(int Width, int Height, Object3D[] Objects, Light[] Lights)
             var lightPower = light.Power / (trace.Distance * trace.Distance) * lightPowerFactor;
 
             var lightToHitPoint = light.Position.Sub(trace.HitPoint);
-            var hitPointNorm = trace.Object.Norm(trace.HitPoint);
+            var hitPointNorm = trace.Object.Norm(trace);
             var lightAngleCos = lightToHitPoint.Cos(hitPointNorm);
             sumLights += lightPower * lightAngleCos * 0.5;
 
@@ -59,7 +69,7 @@ public record Scene(int Width, int Height, Object3D[] Objects, Light[] Lights)
             }
         }
 
-        var color = trace.Object.GetColor(trace.HitPoint);
+        var color = trace.Object.GetColor(trace);
         return color.Multiply(sumLights);
     }
 

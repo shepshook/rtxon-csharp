@@ -39,6 +39,12 @@ public class Color
             Blue = (int)(blue * MaxValue)
         };
 
+    public static Color FromInt(int color)
+    {
+        var bytes = BitConverter.GetBytes(color);
+        return new Color(bytes[1], bytes[2], bytes[3]);
+    }
+
     public Color Multiply(double factor) =>
         new Color(_red * factor, _green * factor, _blue * factor);
 
