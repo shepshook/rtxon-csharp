@@ -1,18 +1,16 @@
-using RtxOn.Console.Common;
-using RtxOn.Console.Objects;
+using RtxOn.Engine.Common;
+using RtxOn.Engine.Objects;
 
-namespace RtxOn.Console.Engine;
+namespace RtxOn.Engine.Tracer;
 
 public class Scene
 {
     public List<Object3D> Objects { get; set; }
-    public List<Light> Lights { get; set; }
-    public int HeightPixels { get; } = 1280;
-    public int WidthPixels { get; } = 768;
+    public List<PointLight> Lights { get; set; }
     public PerspectiveCamera Camera { get; set; }
     public Color BackgroundColor { get; set; } = new Color(20, 20, 30);
 
-    public Scene(IEnumerable<Object3D> objects, IEnumerable<Light> lights, PerspectiveCamera camera)
+    public Scene(IEnumerable<Object3D> objects, IEnumerable<PointLight> lights, PerspectiveCamera camera)
     {
         Objects = objects.ToList();
         Lights = lights.ToList();
@@ -23,16 +21,16 @@ public class Scene
     {
         var result = TraceObjects(ray);
         if (!result.IsHit) return BackgroundColor;
-        
+
         var surfaceColor = ComputeSurfaceColor(ray, result);
         var reflectionColor = TraceReflection(ray, result, power);
 
         return surfaceColor.Sum(reflectionColor).Multiply(power);
     }
 
-    public Color TraceReflection(Ray ray, TraceResult trace, double power)
+    private Color TraceReflection(Ray ray, TraceResult trace, double power)
     {
-        if (power < 0.1)
+        if (power < 2) //todo 0.1
         {
             return new Color(0, 0, 0);
         }
@@ -40,7 +38,7 @@ public class Scene
         var reflectedDirection = ray.Direction.Reflect(trace.Object.Norm(trace));
         var reflectedRay = new Ray(trace.HitPoint, reflectedDirection);
 
-        return Trace(reflectedRay, 0.1 * power);
+        return Trace(reflectedRay, 0.1 * power); //todo material reflectiveness
     }
 
     private Color ComputeSurfaceColor(Ray ray, TraceResult trace)
@@ -50,8 +48,7 @@ public class Scene
         {
             if (IsInShadow(trace, light)) continue;
 
-            const int lightPowerFactor = 1_000_000;
-            var lightPower = light.Power / (trace.Distance * trace.Distance) * lightPowerFactor;
+            var lightPower = light.Power / (trace.Distance * trace.Distance);
 
             var lightToHitPoint = light.Position.Sub(trace.HitPoint);
             var hitPointNorm = trace.Object.Norm(trace);
@@ -64,7 +61,7 @@ public class Scene
 
             if (phongCos > 0)
             {
-                var phongFactor = Math.Pow(phongCos, 20);
+                var phongFactor = Math.Pow(phongCos, 20); //todo material shininess
                 sumLights += lightPower * phongFactor;
             }
         }
@@ -73,14 +70,16 @@ public class Scene
         return color.Multiply(sumLights);
     }
 
-    private bool IsInShadow(TraceResult trace, Light light)
+    private bool IsInShadow(TraceResult trace, PointLight light)
     {
+        //var rayStart = trace.HitPoint.Sum(light.Position.Sub(trace.HitPoint).ToUnit().Multiply(100));
         var ray = Ray.CreateByTwoPoints(light.Position, trace.HitPoint);
 
         var shadowTrace = TraceObjects(ray);
-        // if (!shadowTrace.IsHit || shadowTrace.Object == trace.Object) return false;
 
-        const double pointsEqualityThreshold = 0.1d;
+        const double pointsEqualityThreshold = 1e-5;//todo to config
+        //if (shadowTrace.Object == trace.Object) return false;
+
         return !shadowTrace.IsHit || shadowTrace.HitPoint.Sub(trace.HitPoint).Length > pointsEqualityThreshold;
     }
 
@@ -96,15 +95,14 @@ public class Scene
 
             // todo: add collision conditions
             if (ray.Direction.Cos(objectTraceResult.HitPoint.Sub(ray.Start)) > 0
-                && objectTraceResult.HitPoint.Sub(ray.Start).Length > 1)
+                && objectTraceResult.HitPoint.Sub(ray.Start).Length > 1e-5) //todo to config
             {
-
                 traceResults.Add(objectTraceResult);
             }
         }
 
-        return traceResults.Any() 
-            ? traceResults.MinBy(x => x.Distance) 
+        return traceResults.Any()
+            ? traceResults.MinBy(x => x.Distance)
             : TraceResult.NoHit();
     }
 }

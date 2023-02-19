@@ -1,66 +1,49 @@
-using RtxOn.Console.Common;
+﻿using RtxOn.Engine.Common;
 
-namespace RtxOn.Console.Engine;
-
-public sealed class Engine
-{
-    public static Color[,] Render(Scene scene)
-    {
-        var canvas = new Canvas(PerspectiveCamera.WidthPixels, PerspectiveCamera.HeightPixels);
-
-        Parallel.ForEach(scene.Camera.Grid, tuple =>
-        {
-            var ray = Ray.CreateByTwoPoints(scene.Camera.Position, tuple.Vector);
-            var pixel = scene.Trace(ray);
-            canvas[tuple.X, tuple.Y] = pixel;
-        });
-
-        return canvas.ToArray2D();
-    }
-}
+namespace RtxOn.Engine.Tracer;
 
 public class PerspectiveCamera
 {
-    public const int WidthPixels = 1280;
-    public const int HeightPixels = 768;
+    public const int WidthPixels = 1620;
+    public const int HeightPixels = 1050;
 
     public Vector Position { get; private set; }
     public Vector Destination { get; private set; }
 
     public double Near { get; private set; }
-    public double HorizontalFov { get; private set; }
+    public double VerticalFov { get; private set; }
     public List<(int X, int Y, Vector Vector)> Grid { get; private set; }
 
-    public PerspectiveCamera(Vector position, double near, double hFov)
+    public PerspectiveCamera(Vector position, double near, double vFovDegrees)
     {
         Position = position;
         Near = near;
-        HorizontalFov = hFov * Math.PI / 180;
+        VerticalFov = vFovDegrees * Math.PI / 180;
         Destination = Position.Sum(new Vector(0, 0, near));
         Grid = CalculateGrid();
     }
 
     private List<(int, int, Vector)> CalculateGrid()
     {
-        var vFov = 2 * Math.Atan(Math.Tan(HorizontalFov * Math.PI / 360) * HeightPixels / WidthPixels);
+        var hFov = 2 * Math.Atan(Math.Tan(VerticalFov / 2) * Math.Pow((double)WidthPixels / HeightPixels, 1.8));
 
         var direction = Destination.Sub(Position);
-        var left = direction.RotateY(-HorizontalFov / 2).Sum(Position).X;
-        var right = direction.RotateY(HorizontalFov / 2).Sum(Position).X;
+        var left = direction.RotateY(hFov / 2).Sum(Position).X;
+        var right = direction.RotateY(-hFov / 2).Sum(Position).X;
 
-        var top = direction.RotateX(-vFov / 2).Sum(Position).Y;
-        var bottom = direction.RotateX(vFov / 2).Sum(Position).Y;
+        var top = direction.RotateX(VerticalFov / 2).Sum(Position).Y;
+        var bottom = direction.RotateX(-VerticalFov / 2).Sum(Position).Y;
 
         var grid = new List<(int, int, Vector)>();
 
         var xInt = 0;
         foreach (var x in SplitInto(left, right, WidthPixels))
         {
-            var yInt = 0;
-            foreach (var y in SplitInto(top, bottom, HeightPixels))
+            var yInt = HeightPixels - 1;
+            foreach (var y in SplitInto(bottom, top, HeightPixels))
             {
                 grid.Add((xInt, yInt, new Vector(x, y, Destination.Z)));
-                yInt++;
+                yInt--;
             }
             xInt++;
         }
@@ -78,10 +61,13 @@ public class PerspectiveCamera
 
     private IEnumerable<double> SplitInto(double start, double end, int count)
     {
-        if (end <= start) throw new ArgumentException("End must be greater than Start");
+        if (end <= start)
+        {
+            (end, start) = (start, end);
+        }
 
         var step = (end - start) / count;
-        
+
         for (var i = 0; i < count; i++)
         {
             yield return start + step;

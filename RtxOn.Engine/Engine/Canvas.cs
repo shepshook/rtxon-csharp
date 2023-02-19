@@ -1,6 +1,6 @@
-using RtxOn.Console.Common;
+using RtxOn.Engine.Common;
 
-namespace RtxOn.Console.Engine;
+namespace RtxOn.Engine.Tracer;
 
 public class Canvas
 {
@@ -19,8 +19,8 @@ public class Canvas
             _pixelsSet++;
             if (_pixelsSet % (_array.Length / 10) == 0)
             {
-                var percents = _pixelsSet / (double) _array.Length * 100d;
-                System.Console.WriteLine($"{percents:0.0}% completed");
+                var percents = _pixelsSet / (double)_array.Length * 100d;
+                Console.WriteLine($"{percents:0.0}% completed");
             }
         }
     }

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RtxOn.Console.Common;
-using RtxOn.Console.Engine;
-using RtxOn.Console.Loader;
+using RtxOn.Engine.Tracer;
+using RtxOn.Engine.Common;
+using RtxOn.Engine.Loader;
+using SkiaSharp;
 
 namespace RtxOn.Mvc.Controllers;
 
@@ -9,17 +10,34 @@ namespace RtxOn.Mvc.Controllers;
 [ApiController]
 public class RenderController : ControllerBase
 {
-    private readonly IObjectLoaderFactory _loaderFactory;
-
-    public RenderController(IObjectLoaderFactory loaderFactory)
+    [HttpPost]
+    [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Render(ImportScene importScene)
     {
-        _loaderFactory = loaderFactory;
+        var loader = new JsonSceneLoader();
+        var scene = loader.LoadScene(importScene);
+
+        var pixels = Engine.Tracer.Engine.Render(scene);
+        return File(ToImage(pixels), "image/png");
     }
 
-    [HttpPost]
-    public Color[,] Render(ImportScene importScene)
+    private byte[] ToImage(Color[,] pixels)
     {
-        var scene = new Scene();
-        return Engine.Render(scene);
+        var width = pixels.GetLength(0);
+        var height = pixels.GetLength(1);
+
+        var bitmap = new SKBitmap(width, height);
+        for (var x = 0; x < width; x++)
+        {
+            for (var y = 0; y < height; y++)
+            {
+                var color = pixels[x, y];
+                bitmap.SetPixel(x, y, new SKColor((byte)color.Red, (byte)color.Green, (byte)color.Blue));
+            }
+        }
+
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        return data.ToArray();
     }
 }

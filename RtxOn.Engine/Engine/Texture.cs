@@ -1,7 +1,7 @@
-using RtxOn.Console.Common;
+using RtxOn.Engine.Common;
 using SkiaSharp;
 
-namespace RtxOn.Console.Engine
+namespace RtxOn.Engine.Tracer
 {
     public abstract class Texture
     {
@@ -35,8 +35,8 @@ namespace RtxOn.Console.Engine
 
         public override Color GetColor(double u, double v)
         {
-            var x = (int) (u * _pixels.Width);
-            var y = (int) (v * _pixels.Height);
+            var x = (int)(u * _pixels.Width);
+            var y = (int)(v * _pixels.Height);
             var c = _pixels.GetPixelColor(x, y);
 
             return new Color(c.Red, c.Green, c.Blue);

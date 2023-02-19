@@ -1,18 +1,4 @@
-namespace RtxOn.Console.Common;
-
-public record Vector(double X, double Y, double Z)
-{
-    public static Vector Create(List<double> source)
-    {
-        var x = source[0];
-        var y = source[1];
-        var z = source[2];
-
-        return new Vector(x, y, z);
-    }
-
-    public double Length => (double)Math.Sqrt(X * X + Y * Y + Z * Z);
-}
+﻿namespace RtxOn.Engine.Common;
 
 public static class VectorExtensions
 {
@@ -29,7 +15,7 @@ public static class VectorExtensions
         new Vector(vector.X * coefficient, vector.Y * coefficient, vector.Z * coefficient);
 
     public static double Cos(this Vector a, Vector b) =>
-        Dot(a, b) / a.Length / b.Length;
+        a.Dot(b) / a.Length / b.Length;
 
     public static Vector ToUnit(this Vector vector)
     {
@@ -40,7 +26,7 @@ public static class VectorExtensions
     public static Vector Reflect(this Vector vector, Vector norm)
     {
         var normalizedNorm = norm.ToUnit();
-        return vector.Sub(norm.Multiply(2 * Dot(vector, normalizedNorm)));
+        return vector.Sub(norm.Multiply(2 * vector.Dot(normalizedNorm)));
     }
 
     public static Vector RotateX(this Vector vector, double angleRad)
@@ -69,12 +55,15 @@ public static class VectorExtensions
 
     public static Vector Transform(this Vector v, double[,] t)
     {
-        var list = new List<double>();
+        var array = new double[3];
         for (var i = 0; i < 3; i++)
         {
-            list[i] = t[i, 0] * v.X + t[i, 1] * v.Y + t[i, 2] * v.Z + t[i, 3];
+            array[i] = t[i, 0] * v.X + t[i, 1] * v.Y + t[i, 2] * v.Z + t[i, 3];
         }
 
-        return Vector.Create(list);
+        var translation = new Vector(t[3, 0], t[3, 1], t[3, 2]);
+
+        var result = Vector.Create(array);
+        return result.Sum(translation);
     }
 }

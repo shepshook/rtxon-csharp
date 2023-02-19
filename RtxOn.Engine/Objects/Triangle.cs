@@ -1,8 +1,8 @@
-using RtxOn.Console.Common;
-using RtxOn.Console.Engine;
-using RtxOn.Console.Loader;
+using RtxOn.Engine.Common;
+using RtxOn.Engine.Tracer;
+using RtxOn.Engine.Loader;
 
-namespace RtxOn.Console.Objects;
+namespace RtxOn.Engine.Objects;
 
 public class Triangle : Object3D
 {
@@ -12,30 +12,30 @@ public class Triangle : Object3D
     protected Vector _norm;
     private double _d;
 
-    private readonly Color _color;
+    protected readonly Material _material;
 
-    public Triangle(Vector a, Vector b, Vector c, Color color = default)
+    public Triangle(Vector a, Vector b, Vector c, Material material)
     {
         _a = a;
         _b = b;
         _c = c;
-        _color = color;
+        _material = material;
         _norm = c.Sub(a).Cross(b.Sub(c));
         _d = -1 * _norm.Dot(_a);
     }
 
     public static Triangle Create(IEnumerable<Vector> points, Material material)
     {
-        return new Triangle(points.First(), points.Second(), points.Third(), material.DiffuseColor);
+        return new Triangle(points.First(), points.Second(), points.Third(), material);
     }
 
-    public override Color GetColor(TraceResult trace) => _color;
+    public override Color GetColor(TraceResult trace) => _material.DiffuseColor;
 
     public override Vector Norm(TraceResult trace) => _norm;
 
     public override TraceResult Trace(Ray ray)
     {
-        const double Eps = 1e-3;
+        const double Eps = 1e-5;
 
         var dot = _norm.Dot(ray.Direction);
         if (Math.Abs(dot) < Eps)

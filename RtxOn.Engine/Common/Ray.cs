@@ -1,4 +1,4 @@
-namespace RtxOn.Console.Common;
+namespace RtxOn.Engine.Common;
 
 public class Ray
 {

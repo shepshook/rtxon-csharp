@@ -1,22 +1,20 @@
-using RtxOn.Console.Common;
-using RtxOn.Console.Engine;
+using RtxOn.Engine.Common;
+using RtxOn.Engine.Tracer;
 
-namespace RtxOn.Console.Objects
+namespace RtxOn.Engine.Objects
 {
     public class FlatUvTriangle : Triangle
     {
         private readonly (double U, double V) _aMap;
         private readonly (double U, double V) _bMap;
         private readonly (double U, double V) _cMap;
-        private readonly Texture _texture;
 
-        public FlatUvTriangle(Vector[] vertices, (double, double)[] uvs, Texture texture)
-            : base(vertices[0], vertices[1], vertices[2])
+        public FlatUvTriangle(Vector[] vertices, (double, double)[] uvs, Material material)
+            : base(vertices[0], vertices[1], vertices[2], material)
         {
             _aMap = uvs[0];
             _bMap = uvs[1];
             _cMap = uvs[2];
-            _texture = texture;
         }
 
         public override TraceResult Trace(Ray ray)
@@ -61,7 +59,7 @@ namespace RtxOn.Console.Objects
             {
                 return TraceResult.NoHit();
             }
-            
+
             var det3 = CalculateDeterminant3(new double[,]
             {
                 { ba.X, ca.X, sa.X },
@@ -83,7 +81,7 @@ namespace RtxOn.Console.Objects
         public override Color GetColor(TraceResult trace)
         {
             var uvPoint = InterpolatePoint(trace.HitPoint);
-            return _texture.GetColor(uvPoint.Item1, uvPoint.Item2);
+            return _material.Texture.GetColor(uvPoint.Item1, uvPoint.Item2);
         }
 
         private (double U, double V) InterpolatePoint(Vector point)

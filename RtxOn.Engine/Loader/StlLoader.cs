@@ -1,12 +1,11 @@
-using RtxOn.Console.Objects;
+using RtxOn.Engine.Objects;
 
-namespace RtxOn.Console.Loader
+namespace RtxOn.Engine.Loader;
+
+public class StlLoader : IObjectLoader
 {
-    public class StlLoader : IObjectLoader
+    public List<Triangle> LoadMesh()
     {
-        public List<Triangle> LoadMesh()
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

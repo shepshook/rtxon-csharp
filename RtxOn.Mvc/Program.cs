@@ -1,7 +1,14 @@
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddSwaggerGen(config =>
+{
+    config.SwaggerDoc("v1", new OpenApiInfo { Title = "RtxOn API", Version = "v1" });
+});
 
 var app = builder.Build();
 
@@ -13,13 +20,22 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RtxOn API v1");
+});
 
+app.Use((context, next) =>
+{
+    context.Request.EnableBuffering();
+    return next();
+});
+
+app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthorization();
-
 app.MapRazorPages();
+app.MapControllers();
 
 app.Run();

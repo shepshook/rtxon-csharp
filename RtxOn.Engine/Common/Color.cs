@@ -1,4 +1,4 @@
-namespace RtxOn.Console.Common;
+namespace RtxOn.Engine.Common;
 
 using System;
 
@@ -31,7 +31,7 @@ public class Color
     }
 
     // From 0 to 1
-    public static Color FromNormalized(double red, double green, double blue) => 
+    public static Color FromNormalized(double red, double green, double blue) =>
         new Color
         {
             Red = (int)(red * MaxValue),
@@ -42,8 +42,12 @@ public class Color
     public static Color FromInt(int color)
     {
         var bytes = BitConverter.GetBytes(color);
-        return new Color(bytes[1], bytes[2], bytes[3]);
+        return new Color(bytes[2], bytes[1], bytes[0]);
     }
+
+    public static Color CreateRed() =>   new Color(200, 20, 20);
+    public static Color CreateGreen() => new Color(20, 200, 20);
+    public static Color CreateBlue() =>  new Color(20, 20, 200);
 
     public Color Multiply(double factor) =>
         new Color(_red * factor, _green * factor, _blue * factor);

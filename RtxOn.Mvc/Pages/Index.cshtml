@@ -59,6 +59,7 @@
 			import { Toolbar } from '/lib/threejs/js/Toolbar.js';
 			import { Script } from '/lib/threejs/js/Script.js';
 			import { Player } from '/lib/threejs/js/Player.js';
+			import { Renderer } from '/lib/threejs/js/Renderer.js';
 			import { Sidebar } from '/lib/threejs/js/Sidebar.js';
 			import { Menubar } from '/lib/threejs/js/Menubar.js';
 			import { Resizer } from '/lib/threejs/js/Resizer.js';
@@ -92,6 +93,9 @@
 
 			const player = new Player( editor );
 			document.body.appendChild( player.dom );
+
+			const renderer = new Renderer( editor );
+			document.body.appendChild( renderer.dom );
 
 			const sidebar = new Sidebar( editor );
 			document.body.appendChild( sidebar.dom );

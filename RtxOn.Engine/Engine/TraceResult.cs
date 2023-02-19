@@ -1,7 +1,7 @@
-using RtxOn.Console.Common;
-using RtxOn.Console.Objects;
+using RtxOn.Engine.Common;
+using RtxOn.Engine.Objects;
 
-namespace RtxOn.Console.Engine;
+namespace RtxOn.Engine.Tracer;
 
 public class TraceResult
 {
@@ -13,10 +13,14 @@ public class TraceResult
 
     public Object3D Object { get; init; }
 
+    public Color Color { get; init; }
+
+    public Vector Norm { get; init; }
+
     private TraceResult()
     { }
 
-    public static TraceResult Hit(Object3D @object, Vector hitPoint, double distance) => 
+    public static TraceResult Hit(Object3D @object, Vector hitPoint, double distance) =>
         new TraceResult
         {
             IsHit = true,

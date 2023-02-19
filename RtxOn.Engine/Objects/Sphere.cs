@@ -1,22 +1,22 @@
-using RtxOn.Console.Common;
-using RtxOn.Console.Engine;
+using RtxOn.Engine.Common;
+using RtxOn.Engine.Tracer;
 
-namespace RtxOn.Console.Objects;
+namespace RtxOn.Engine.Objects;
 
 public class Sphere : Object3D
 {
     private Vector _center;
     private double _radius;
-    private Color _color;
+    private Material _material;
 
-    public Sphere(Vector center, double radius, Color color)
+    public Sphere(Vector center, double radius, Material material)
     {
         _center = center;
         _radius = radius;
-        _color = color;
+        _material = material;
     }
 
-    public override Color GetColor(TraceResult trace) => _color;
+    public override Color GetColor(TraceResult trace) => _material.DiffuseColor;
 
     public override Vector Norm(TraceResult trace)
     {
@@ -32,9 +32,9 @@ public class Sphere : Object3D
         var m = ray.Direction.Y;
         var n = ray.Direction.Z;
 
-        var k = (ray.Start.X - _center.X);
-        var p = (ray.Start.Y - _center.Y);
-        var f = (ray.Start.Z - _center.Z);
+        var k = ray.Start.X - _center.X;
+        var p = ray.Start.Y - _center.Y;
+        var f = ray.Start.Z - _center.Z;
 
         var a = l * l + m * m + n * n;
         var b = 2 * (k * l + p * m + f * n);
@@ -48,10 +48,10 @@ public class Sphere : Object3D
         var t1 = (-b + sqrt_D) / (2 * a);
         var t2 = (-b - sqrt_D) / (2 * a);
 
-        var min_t = (t1 < t2) ? t1 : t2;
-        var max_t = (t1 > t2) ? t1 : t2;
+        var min_t = t1 < t2 ? t1 : t2;
+        var max_t = t1 > t2 ? t1 : t2;
 
-        var t = (min_t > Eps) ? min_t : max_t;
+        var t = min_t > Eps ? min_t : max_t;
 
         if (t < Eps) return TraceResult.NoHit();
 
@@ -64,5 +64,6 @@ public class Sphere : Object3D
     public override void Transform(double[,] transformation)
     {
         _center = _center.Transform(transformation);
+        _radius *= transformation[0, 0];
     }
 }

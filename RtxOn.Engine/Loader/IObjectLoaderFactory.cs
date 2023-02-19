@@ -1,4 +1,4 @@
-namespace RtxOn.Console.Loader
+namespace RtxOn.Engine.Loader
 {
     public interface IObjectLoaderFactory
     {

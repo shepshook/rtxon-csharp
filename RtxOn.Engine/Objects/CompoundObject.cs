@@ -1,7 +1,7 @@
-﻿using RtxOn.Console.Common;
-using RtxOn.Console.Engine;
+﻿using RtxOn.Engine.Common;
+using RtxOn.Engine.Tracer;
 
-namespace RtxOn.Console.Objects;
+namespace RtxOn.Engine.Objects;
 
 public class CompoundObject : Object3D
 {

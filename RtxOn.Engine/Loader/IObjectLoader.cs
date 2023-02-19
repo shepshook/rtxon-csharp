@@ -1,6 +1,6 @@
-using RtxOn.Console.Objects;
+using RtxOn.Engine.Objects;
 
-namespace RtxOn.Console.Loader
+namespace RtxOn.Engine.Loader
 {
     public interface IObjectLoader
     {
