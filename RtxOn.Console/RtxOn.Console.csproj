@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="skiasharp" Version="2.80.3" />
+    <PackageReference Include="skiasharp" Version="2.88.6" />
   </ItemGroup>
 
   <ItemGroup>
